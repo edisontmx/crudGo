@@ -1,10 +1,12 @@
 package main
 
 import (
-	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 )
+
+var plantillas = template.Must(template.ParseGlob("plantillas/*"))
 
 func main() {
 	http.HandleFunc("/", index)
@@ -16,5 +18,6 @@ func main() {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "hola developer")
+	//fmt.Fprintf(w, "hola developer")
+	plantillas.ExecuteTemplate(w, "index", nil)
 }
