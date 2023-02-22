@@ -10,6 +10,7 @@ var plantillas = template.Must(template.ParseGlob("plantillas/*"))
 
 func main() {
 	http.HandleFunc("/", index)
+	http.HandleFunc("/crear", Crear)
 
 	log.Println("Servidor corriendo")
 
@@ -20,4 +21,8 @@ func main() {
 func index(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "hola developer")
 	plantillas.ExecuteTemplate(w, "index", nil)
+}
+
+func Crear(w http.ResponseWriter, r *http.Request) {
+	plantillas.ExecuteTemplate(w, "crear", nil)
 }
