@@ -42,6 +42,7 @@ func main() {
 
 	http.HandleFunc("/", index)
 	http.HandleFunc("/crear", Crear)
+	http.HandleFunc("/insertar", Insertar)
 
 	log.Println("Servidor corriendo")
 
@@ -57,6 +58,24 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func Crear(w http.ResponseWriter, r *http.Request) {
 	plantillas.ExecuteTemplate(w, "crear", nil)
+}
+
+func Insertar(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		nombre := r.FormValue("nombre")
+		correo := r.FormValue("correo")
+
+		db, err := conexionDB()
+
+		queryAdd, err := db.Prepare("INSERT INTO empleados(nombre, correo) VALUES(?,?)")
+
+		if err != nil {
+			return
+		}
+		queryAdd.Exec(nombre, correo)
+
+		http.Redirect(w, r, "/", 301)
+	}
 }
 
 func insert(ctx context.Context, db *sql.DB, nombre string, correo string) error {
