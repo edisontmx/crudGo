@@ -1,7 +1,7 @@
 package main
 
 import (
-	"context"
+	/* "context" */
 	"database/sql"
 	"fmt"
 	"html/template"
@@ -32,13 +32,13 @@ var plantillas = template.Must(template.ParseGlob("plantillas/*"))
 
 func main() {
 
-	ctx := context.Background()
+	/* ctx := context.Background() */
 	db, err := conexionDB()
 	if err != nil {
 		panic(err)
 	}
 
-	err = insert(ctx, db, "abiud Medina", "correoabiud@correo.com")
+	/* err = insert(ctx, db, "abiud Medina", "correoabiud@correo.com") */
 
 	http.HandleFunc("/", index)
 	http.HandleFunc("/crear", Crear)
@@ -51,9 +51,44 @@ func main() {
 	db.Close()
 }
 
+type Empleado struct {
+	Id     int
+	Nombre string
+	Correo string
+}
+
 func index(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "hola developer")
-	plantillas.ExecuteTemplate(w, "index", nil)
+
+	db, err := conexionDB()
+
+	queryAll, err := db.Query("SELECT * FROM empleados")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	empleado := Empleado{}
+	arregloEmpleado := []Empleado{}
+
+	for queryAll.Next() {
+		var id int
+		var nombre, correo string
+		err = queryAll.Scan(&id, &nombre, &correo)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		empleado.Id = id
+		empleado.Nombre = nombre
+		empleado.Correo = correo
+
+		arregloEmpleado = append(arregloEmpleado, empleado)
+	}
+
+	fmt.Println(arregloEmpleado)
+
+	plantillas.ExecuteTemplate(w, "index", arregloEmpleado)
 }
 
 func Crear(w http.ResponseWriter, r *http.Request) {
@@ -78,7 +113,7 @@ func Insertar(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func insert(ctx context.Context, db *sql.DB, nombre string, correo string) error {
+/* func insert(ctx context.Context, db *sql.DB, nombre string, correo string) error {
 
 	queryADD := `INSERT INTO empleados( nombre, correo) values(?, ?)`
 
@@ -95,3 +130,4 @@ func insert(ctx context.Context, db *sql.DB, nombre string, correo string) error
 
 	return nil
 }
+*/
