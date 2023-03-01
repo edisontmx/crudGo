@@ -43,12 +43,29 @@ func main() {
 	http.HandleFunc("/", index)
 	http.HandleFunc("/crear", Crear)
 	http.HandleFunc("/insertar", Insertar)
+	http.HandleFunc("/borrar", Borrar)
 
 	log.Println("Servidor corriendo")
 
 	http.ListenAndServe(":8080", nil)
 
 	db.Close()
+}
+
+func Borrar(w http.ResponseWriter, r *http.Request) {
+	idEmpleado := r.URL.Query().Get("id")
+	fmt.Println(idEmpleado)
+	db, err := conexionDB()
+
+	queryDelete, err := db.Prepare("DELETE FROM empleados WHERE id=?")
+
+	if err != nil {
+		return
+	}
+	queryDelete.Exec(idEmpleado)
+
+	http.Redirect(w, r, "/", 301)
+
 }
 
 type Empleado struct {
@@ -86,7 +103,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 		arregloEmpleado = append(arregloEmpleado, empleado)
 	}
 
-	fmt.Println(arregloEmpleado)
+	//fmt.Println(arregloEmpleado)
 
 	plantillas.ExecuteTemplate(w, "index", arregloEmpleado)
 }
