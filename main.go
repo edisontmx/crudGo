@@ -44,6 +44,8 @@ func main() {
 	http.HandleFunc("/crear", Crear)
 	http.HandleFunc("/insertar", Insertar)
 	http.HandleFunc("/borrar", Borrar)
+	http.HandleFunc("/editar", Editar)
+	http.HandleFunc("/actualizar", Actualizar)
 
 	log.Println("Servidor corriendo")
 
@@ -108,6 +110,31 @@ func index(w http.ResponseWriter, r *http.Request) {
 	plantillas.ExecuteTemplate(w, "index", arregloEmpleado)
 }
 
+func Editar(w http.ResponseWriter, r *http.Request) {
+	idEmpleado := r.URL.Query().Get("id")
+	fmt.Println(idEmpleado)
+
+	db, err := conexionDB()
+
+	queryOne, err := db.Query("SELECT * FROM empleados WHERE id=?", idEmpleado)
+	empleado := Empleado{}
+	for queryOne.Next() {
+		var id int
+		var nombre, correo string
+		err = queryOne.Scan(&id, &nombre, &correo)
+		if err != nil {
+			panic(err.Error())
+		}
+
+		empleado.Id = id
+		empleado.Nombre = nombre
+		empleado.Correo = correo
+
+		fmt.Println(empleado)
+		plantillas.ExecuteTemplate(w, "editar", empleado)
+	}
+}
+
 func Crear(w http.ResponseWriter, r *http.Request) {
 	plantillas.ExecuteTemplate(w, "crear", nil)
 }
@@ -125,6 +152,25 @@ func Insertar(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		queryAdd.Exec(nombre, correo)
+
+		http.Redirect(w, r, "/", 301)
+	}
+}
+
+func Actualizar(w http.ResponseWriter, r *http.Request) {
+	if r.Method == "POST" {
+		id := r.FormValue("id")
+		nombre := r.FormValue("nombre")
+		correo := r.FormValue("correo")
+
+		db, err := conexionDB()
+
+		queryUpdate, err := db.Prepare("UPDATE empleados SET nombre=?, correo=? WHERE id=?")
+
+		if err != nil {
+			return
+		}
+		queryUpdate.Exec(nombre, correo, id)
 
 		http.Redirect(w, r, "/", 301)
 	}
