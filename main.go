@@ -11,7 +11,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func conexionDB() (*sql.DB, error) {
+/* func conexionDB() (*sql.DB, error) {
 	connString := "root:@tcp(localhost:3308)/sistema?parseTime=true"
 
 	db, err := sql.Open("mysql", connString)
@@ -26,7 +26,44 @@ func conexionDB() (*sql.DB, error) {
 
 	return db, nil
 
+} */
+
+func conexionDB() (*sql.DB, error) {
+
+	Driver := "mysql"
+	Usuario := "root"
+	Clave := ""
+	Puerto := "@tcp(localhost:3308)/"
+	Nombre := "sistema"
+
+	//connString := "root:@tcp(localhost:3308)/sistema?parseTime=true"
+
+	db, err := sql.Open(Driver, Usuario+Clave+Puerto /* "@tcp(localhost:3308)/" */ +Nombre)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Ping()
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
+
 }
+
+/* func conexionDB() (conexion *sql.DB) {
+	Driver := "mysql"
+	Usuario := "root"
+	Clave := "root"
+	Nombre := "sistema"
+
+	conexion, err := sql.Open(Driver, Usuario+":"+Clave+"@tcp(localhost:3308)/"+Nombre)
+	if err != nil {
+		panic(err.Error())
+	}
+	return conexion
+} */
 
 var plantillas = template.Must(template.ParseGlob("plantillas/*"))
 
