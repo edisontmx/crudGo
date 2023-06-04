@@ -99,11 +99,11 @@ func main() {
 	http.HandleFunc("/actualizar", Actualizar)
 
 	log.Println("Servidor corriendo")
-	Host := os.Getenv("HOST")
-	if Host == "" {
-		Host = "8080"
+	Port := os.Getenv("HOST")
+	if Port == "" {
+		Port = "8080"
 	}
-	http.ListenAndServe(":"+Host, nil)
+	http.ListenAndServe(":"+Port, nil)
 
 	db.Close()
 }
