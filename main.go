@@ -2,7 +2,7 @@ package main
 
 import (
 	/* "context" */
-	"crudgo/envs"
+
 	"database/sql"
 	"fmt"
 	"html/template"
@@ -32,20 +32,20 @@ import (
 
 func conexionDB() (*sql.DB, error) {
 
-	Driver := envs.Get("DB_DRIVER", "mysql")
+	Driver := os.Getenv("DB_DRIVER")
 	if Driver == "" {
 		Driver = "mysql"
 	}
-	Usuario := envs.Get("DB_USER", "root")
+	Usuario := os.Getenv("DB_USER")
 	if Usuario == "" {
 		Usuario = "root"
 	}
-	Clave := envs.Get("DB_KEY", "")
-	Puerto := envs.Get("DB_PORT", "@tcp(localhost:3308)/")
+	Clave := os.Getenv("DB_PASS")
+	Puerto := os.Getenv("DB_PORT")
 	if Puerto == "" {
 		Puerto = "@tcp(localhost:3308)/"
 	}
-	Nombre := envs.Get("DB_NAME", "sistema")
+	Nombre := os.Getenv("DB_NAME")
 	if Nombre == "" {
 		Nombre = "sistema"
 	}
