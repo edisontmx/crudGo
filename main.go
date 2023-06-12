@@ -41,10 +41,20 @@ func conexionDB() (*sql.DB, error) {
 		Usuario = "root"
 	}
 	Clave := os.Getenv("DB_PASS")
+	if Clave == "" {
+		Clave = ""
+	}
+
 	Puerto := os.Getenv("DB_PORT")
 	if Puerto == "" {
 		Puerto = "@tcp(localhost:3308)/"
 	}
+
+	/* Host := os.Getenv("DB_HOST")
+	if Host == "" {
+		Host = "@tcp"
+	}*/
+
 	Nombre := os.Getenv("DB_NAME")
 	if Nombre == "" {
 		Nombre = "sistema"
@@ -99,7 +109,7 @@ func main() {
 	http.HandleFunc("/actualizar", Actualizar)
 
 	log.Println("Servidor corriendo")
-	Port := os.Getenv("HOST")
+	Port := os.Getenv("PORT")
 	if Port == "" {
 		Port = "8080"
 	}
